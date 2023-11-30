@@ -264,7 +264,7 @@
       # https://github.com/NixOS/nixpkgs/blob/db24d86dd8a4769c50d6b7295e81aa280cd93f35/pkgs/applications/editors/neovim/wrapper.nix#L13
       extraName = "";
       withPython2 = false;
-      vimAlias = true;
+      vimAlias = false; # true woudl point to binary with default config
       viAlias = false;
       wrapRc = false;
       neovimRcContent = "";
@@ -288,6 +288,7 @@
         --set XDG_CONFIG_HOME ${xdgConfig} \
         --suffix PATH : ${path}
 
+      ln --symbolic $out/bin/nvim  $out/bin/vim
     '';
   in {
     packages.x86_64-linux.nvim = pkgs.symlinkJoin {
