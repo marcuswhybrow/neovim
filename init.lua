@@ -452,7 +452,23 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
   },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      scope_incremental = "grc",
+      node_incremental = "grn",
+      node_decremental = "grm",
+    },
+  },
+  indent = {
+    enable = true,
+  },
 }
+
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+-- vim.opt.nofoldenable
 
 -- [[telescope-nvim]]
 
