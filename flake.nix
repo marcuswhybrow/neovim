@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    harpoon.url = "github:NixOS/nixpkgs/8cfef6986adfb599ba379ae53c9f5631ecd2fd9c";
   };
 
   outputs = inputs: let 
@@ -80,11 +81,12 @@
       };
     };
 
+    harpoon = inputs.harpoon.legacyPackages.x86_64-linux.vimPlugins.harpoon;
+
     plugins = with pkgs.vimPlugins; [
       telescope-nvim
       telescope-fzf-native-nvim
       nvim-web-devicons
-      harpoon
       undotree
       trouble-nvim
       vim-nix
@@ -108,6 +110,7 @@
       plenary-nvim
       vim-startuptime
     ] ++ [
+      harpoon
       nvim-treesitter
       templ-vim
       vim-eel2
