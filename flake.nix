@@ -59,17 +59,6 @@
       };
     };
 
-    transparent-nvim = pkgs.vimUtils.buildVimPlugin {
-      pname = "transparent-nvim";
-      version = "3af6232c8d39d51062702e875ff6407c1eeb0391";
-      src = pkgs.fetchFromGitHub {
-        owner = "xiyaowong";
-        repo = "transparent.nvim";
-        rev = "3af6232c8d39d51062702e875ff6407c1eeb0391";
-        sha256 = "sha256-1JyfwHBCtNCPmsOLzJRWBtg1u9uApQZY4fn2mTL3NZ4=";
-      };
-    };
-
     bg-nvim = pkgs.vimUtils.buildVimPlugin rec {
       pname = "bg-nvim";
       version = "1c95261cc5e3062e3b277fc5c15d180d51a40f62";
@@ -115,7 +104,6 @@
       templ-vim
       vim-eel2
       lsp-zero-nvim
-      transparent-nvim
       bg-nvim
     ];
 
