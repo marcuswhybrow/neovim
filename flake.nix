@@ -9,21 +9,8 @@
   outputs = inputs: let 
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
 
-    templ = pkgs.vimUtils.buildVimPlugin {
-      pname = "tree-sitter-templ";
-      version = "89e5957b47707b16be1832a2753367b91fb85be0";
-      src = pkgs.fetchFromGitHub {
-        owner = "vrischmann";
-        repo = "tree-sitter-templ";
-        rev = "89e5957b47707b16be1832a2753367b91fb85be0";
-        sha256 = "sha256-nNC0mMsn5KAheFqOQNbbcXYnyd2S8EoGc1k+1Zi6PVc=";
-      };
-    };
-
     nvim-treesitter = pkgs.vimPlugins.nvim-treesitter.withPlugins (tsPkgs: with tsPkgs; [
-      nix go rust bash fish html css json yaml toml ron lua c
-    ] ++ [
-      templ
+      nix go rust bash fish html css json yaml toml ron lua c templ
     ]);
 
     templ-vim = pkgs.vimUtils.buildVimPlugin {
