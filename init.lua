@@ -133,7 +133,9 @@ lspconfig.tailwindcss.setup({
 
 lspconfig.nil_ls.setup{}
 lspconfig.bashls.setup{}
-lspconfig.html.setup{}
+lspconfig.html.setup({
+  filetypes = { "html" }, -- Omits implicit "templ" to prevent formatting bug
+})
 lspconfig.cssls.setup{}
 lspconfig.jsonls.setup{}
 lspconfig.eslint.setup{}
@@ -486,14 +488,10 @@ vim.keymap.set('n', '<leader>bd', 'ds]ds]', { desc = 'Delete inner word\'s doubl
 -- [[templ-vim]]
 
 vim.api.nvim_create_autocmd(
+  { "BufWritePre" },
   {
-    "BufWritePre"
-  },
-  {
-    pattern = {"*.templ"},
-    callback = function()
-      vim.lsp.buf.format()
-    end,
+    pattern = { "*.templ" },
+    callback = vim.lsp.buf.format
   }
 )
 
