@@ -161,7 +161,7 @@
     };
 
     packages.x86_64-linux.fish-abbreviations = let 
-      neovim = inputs.self.packages.x86_64-linux.nvim;
+      neovim = "${inputs.self.packages.x86_64-linux.nvim}/bin/nvim";
     in pkgs.writeTextDir "share/fish/vendor_conf.d/neovim.fish" ''
       if status is-interactive
         abbr --add t ${neovim} ~/obsidian/Timeline/$(date +%Y-%m-%d).md
