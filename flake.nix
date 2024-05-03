@@ -160,6 +160,15 @@
       meta.description = "Neovim with LSP configured but without LSP *servers*";
     };
 
+    packages.x86_64-linux.fish-abbreviations = let 
+      neovim = inputs.self.packages.x86_64-linux.nvim;
+    in pkgs.writeTextDir "share/fish/vendor_conf.d/neovim.fish" ''
+      if status is-interactive
+        abbr --add t ${neovim} ~/obsidian/Timeline/$(date +%Y-%m-%d).md
+        abbr --add y ${neovim} ~/obsidian/Timeline/$(date +%Y-%m-%d --date yesterday).md
+      end
+    '';
+
     packages.x86_64-linux.default = inputs.self.packages.x86_64-linux.nvim;
 
     apps.x86_64-linux.neovim = {
