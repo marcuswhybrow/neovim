@@ -145,29 +145,37 @@
       makeWrapper ${neovim}/bin/nvim $out/bin/nvim \
         --add-flags "-u ${init}/share/nvim/init.lua" \
         --suffix PATH : ${inPath}
-      ln --symbolic $out/bin/nvim  $out/bin/vim
+      ln --symbolic $out/bin/nvim $out/bin/vim
+    '';
+
+    fishAbbrs = pkgs.writeTextDir "share/fish/vendor_conf.d/marcuswhybrow-neovim.fish" ''
+      if status is-interactive
+        abbr --add t vim ~/obsidian/Timeline/$(date +%Y-%m-%d).md
+        abbr --add y vim ~/obsidian/Timeline/$(date +%Y-%m-%d --date yesterday).md
+      end
     '';
   in {
     packages.x86_64-linux.nvim = pkgs.symlinkJoin {
       name = "nvim";
-      paths = [ wrapper init pkgs.neovim ];
+      paths = [ 
+        wrapper 
+        init 
+        pkgs.neovim 
+        fishAbbrs 
+      ];
       meta.description = "Neovim including LSP config and servers";
     };
 
     packages.x86_64-linux.nvim-no-lsp = pkgs.symlinkJoin {
       name = "nvim";
-      paths = [ wrapper-no-lsp init pkgs.neovim ];
+      paths = [ 
+        wrapper-no-lsp 
+        init 
+        pkgs.neovim 
+        fishAbbrs
+      ];
       meta.description = "Neovim with LSP configured but without LSP *servers*";
     };
-
-    packages.x86_64-linux.fish-abbreviations = let 
-      neovim = "${inputs.self.packages.x86_64-linux.nvim}/bin/nvim";
-    in pkgs.writeTextDir "share/fish/vendor_conf.d/neovim.fish" ''
-      if status is-interactive
-        abbr --add t ${neovim} ~/obsidian/Timeline/$(date +%Y-%m-%d).md
-        abbr --add y ${neovim} ~/obsidian/Timeline/$(date +%Y-%m-%d --date yesterday).md
-      end
-    '';
 
     packages.x86_64-linux.default = inputs.self.packages.x86_64-linux.nvim;
 
