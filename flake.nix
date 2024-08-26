@@ -10,7 +10,7 @@
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
 
     nvim-treesitter = pkgs.vimPlugins.nvim-treesitter.withPlugins (tsPkgs: with tsPkgs; [
-      nix go rust bash fish html css json yaml toml ron lua c templ
+      nix go rust bash fish html css json yaml toml ron lua c templ javascript
     ]);
 
     templ-vim = pkgs.vimUtils.buildVimPlugin {
