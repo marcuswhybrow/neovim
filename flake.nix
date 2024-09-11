@@ -113,14 +113,15 @@
     neovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped config;
 
     inPath = pkgs.lib.makeBinPath (with pkgs; [
-      nil
-      gopls
-      nodePackages."@tailwindcss/language-server"
-      nodePackages.bash-language-server
+      nil # nix
+      gopls # golang
+      nodePackages."@tailwindcss/language-server" # tailwind CSS processor
+      nodePackages.bash-language-server # BASH
       nodePackages.vscode-langservers-extracted # html css json eslint
-      nodePackages.yaml-language-server
-      rust-analyzer
+      nodePackages.yaml-language-server # yaml
+      rust-analyzer #rust
       marksman # markdown
+      typescript-language-server # typescript jsdoc
     ]);
 
     initFile = pkgs.writeText "neovim-init.lua" (builtins.readFile ./init.lua);

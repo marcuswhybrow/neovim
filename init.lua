@@ -142,6 +142,16 @@ lspconfig.eslint.setup{}
 lspconfig.yamlls.setup{}
 lspconfig.marksman.setup{}
 
+-- Perform Typescript checking on JavaScript
+-- https://www.reddit.com/r/neovim/comments/132ax85/comment/jiacvuy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+lspconfig.tsserver.setup{
+  settings = {
+    implicitProjectConfiguration = {
+      checkJs = true
+    }
+  }
+}
+
 lspconfig.rust_analyzer.setup{
   settings = {
     ['rust-analyzer'] = {
