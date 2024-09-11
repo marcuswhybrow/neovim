@@ -147,6 +147,7 @@ lspconfig.marksman.setup{}
 lspconfig.tsserver.setup{
   settings = {
     implicitProjectConfiguration = {
+      target = "ES2021",
       checkJs = true
     }
   }
