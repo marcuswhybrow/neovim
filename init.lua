@@ -201,7 +201,6 @@ vim.keymap.set("n", "lr", ":LspRestart<cr>", { desc = "[L]SP [R]estart" })
 -- [[catppuccin-nvim]]
 
 require("catppuccin").setup({
-  flavour = "latte",
   background = {
     light = "latte",
     dark = "mocha",
@@ -212,6 +211,7 @@ vim.cmd.colorscheme "catppuccin"
 
 vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg=0, bg="#f0f0f0" })
 vim.opt.colorcolumn = "80"
+
 
 -- [[gitsigns-nvim]]
 
@@ -536,3 +536,4 @@ vim.keymap.set("n", "<leader>gp", ":Git push<cr>", { desc = '[G]it [P]ush' })
 
 vim.opt.termguicolors = true
 require("nvim-highlight-colors").setup()
+
