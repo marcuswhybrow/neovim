@@ -85,6 +85,7 @@
       catppuccin-nvim
       plenary-nvim
       vim-startuptime
+      nvim-highlight-colors 
     ] ++ [
       harpoon
       nvim-treesitter

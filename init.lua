@@ -433,6 +433,12 @@ cmp.setup({
     { name = "buffer" },
     { name = "nvim_lua" },
   },
+
+  formatting = {
+    format = function(entry, item)
+      return require("nvim-highlight-colors").format(entry, item)
+    end
+  }
 })
 
 cmp.setup.filetype("gitcommit", {
@@ -522,3 +528,8 @@ vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = 'Open [U]ndo t
 
 vim.keymap.set("n", "<leader>gs", ":Git<cr>", { desc = '[G]it [S]how' })
 vim.keymap.set("n", "<leader>gp", ":Git push<cr>", { desc = '[G]it [P]ush' })
+
+-- [[nvim-highlight-colors]]
+
+vim.opt.termguicolors = true
+require("nvim-highlight-colors").setup()
