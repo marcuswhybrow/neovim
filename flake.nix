@@ -9,94 +9,7 @@
   outputs = inputs: let 
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
 
-    nvim-treesitter = pkgs.vimPlugins.nvim-treesitter.withPlugins (tsPkgs: with tsPkgs; [
-      nix go rust bash fish html css json yaml toml ron lua c templ javascript
-    ]);
-
-    templ-vim = pkgs.vimUtils.buildVimPlugin {
-      pname = "templ-vim";
-      version = "5cc48b93a4538adca0003c4bc27af844bb16ba24";
-      src = pkgs.fetchFromGitHub {
-        owner = "joerdav";
-        repo = "templ.vim";
-        rev = "5cc48b93a4538adca0003c4bc27af844bb16ba24";
-        sha256 = "sha256-YdV8ioQJ10/HEtKQy1lHB4Tg9GNKkB0ME8CV/+hlgYs=";
-      };
-    };
-
-    vim-eel2 = pkgs.vimUtils.buildVimPlugin {
-      pname = "vim-eel2";
-      version = "2019-11-16";
-      src = pkgs.fetchFromGitHub {
-        owner = "TristanCrawford";
-        repo = "vim-eel2";
-        rev = "6865d0f3e92bb5feb0108cc20f89f69659021483";
-        sha256 = "sha256-lAekmwJxXN+Y6zIxcaJTAftA7919J4Vl1SRjdhx2X8M=";
-      };
-    };
-
-    lsp-zero-nvim = pkgs.vimUtils.buildVimPlugin {
-      pname = "lsp-zero-nvim";
-      version = "2.x";
-      src = pkgs.fetchFromGitHub {
-        owner = "VonHeikemen";
-        repo = "lsp-zero.nvim";
-        rev = "eb278c30b6c50e99fdfde52f7da0e0ff8d17c07e";
-        sha256 = "sha256-C2LvhoNdNXRyG+COqVZv/BcUh6y82tajXipsqdySJJQ=";
-      };
-    };
-
-    bg-nvim = pkgs.vimUtils.buildVimPlugin rec {
-      pname = "bg-nvim";
-      version = "1c95261cc5e3062e3b277fc5c15d180d51a40f62";
-      src = pkgs.fetchFromGitHub {
-        owner = "typicode";
-        repo = "bg.nvim";
-        rev = version; 
-        sha256 = "sha256-ZocdEdw7m6gVQap0MFr1uymIkHnX9ewjWmR7fYVR9Ko=";
-      };
-    };
-
-    harpoon = inputs.harpoon.legacyPackages.x86_64-linux.vimPlugins.harpoon;
-
-    plugins = with pkgs.vimPlugins; [
-      telescope-nvim
-      telescope-fzf-native-nvim
-      nvim-web-devicons
-      undotree
-      trouble-nvim
-      vim-nix
-      luasnip
-      nvim-lspconfig
-      nvim-cmp
-      cmp_luasnip
-      cmp-nvim-lsp
-      cmp-nvim-lua
-      cmp-buffer
-      cmp-path
-      cmp-cmdline
-      cmp-cmdline-history
-      cmp-git
-      vim-commentary
-      vim-surround
-      vim-fugitive
-      gitsigns-nvim
-      lualine-nvim
-      catppuccin-nvim
-      plenary-nvim
-      vim-startuptime
-      nvim-highlight-colors 
-    ] ++ [
-      harpoon
-      nvim-treesitter
-      templ-vim
-      vim-eel2
-      lsp-zero-nvim
-      bg-nvim
-    ];
-
     config = pkgs.neovimUtils.makeNeovimConfig {
-      inherit plugins;
       withPython3 = false; 
       extraPython3Packages = _: [ ];
       withNodeJs = false;
@@ -109,6 +22,103 @@
       viAlias = false;
       wrapRc = false;
       neovimRcContent = "";
+      plugins = [
+        pkgs.vimPlugins.telescope-nvim
+        pkgs.vimPlugins.telescope-fzf-native-nvim
+        pkgs.vimPlugins.nvim-web-devicons
+        pkgs.vimPlugins.undotree
+        pkgs.vimPlugins.trouble-nvim
+        pkgs.vimPlugins.vim-nix
+        pkgs.vimPlugins.luasnip
+        pkgs.vimPlugins.nvim-lspconfig
+        pkgs.vimPlugins.nvim-cmp
+        pkgs.vimPlugins.cmp_luasnip
+        pkgs.vimPlugins.cmp-nvim-lsp
+        pkgs.vimPlugins.cmp-nvim-lua
+        pkgs.vimPlugins.cmp-buffer
+        pkgs.vimPlugins.cmp-path
+        pkgs.vimPlugins.cmp-cmdline
+        pkgs.vimPlugins.cmp-cmdline-history
+        pkgs.vimPlugins.cmp-git
+        pkgs.vimPlugins.vim-commentary
+        pkgs.vimPlugins.vim-surround
+        pkgs.vimPlugins.vim-fugitive
+        pkgs.vimPlugins.gitsigns-nvim
+        pkgs.vimPlugins.lualine-nvim
+        pkgs.vimPlugins.catppuccin-nvim
+        pkgs.vimPlugins.plenary-nvim
+        pkgs.vimPlugins.vim-startuptime
+        pkgs.vimPlugins.nvim-highlight-colors 
+
+        inputs.harpoon.legacyPackages.x86_64-linux.vimPlugins.harpoon
+
+        # nvim-treesitter
+        (pkgs.vimPlugins.nvim-treesitter.withPlugins (treesitter: [
+          treesitter.nix 
+          treesitter.go 
+          treesitter.rust 
+          treesitter.bash 
+          treesitter.fish 
+          treesitter.html 
+          treesitter.css 
+          treesitter.json 
+          treesitter.yaml 
+          treesitter.toml 
+          treesitter.ron 
+          treesitter.lua
+          treesitter.c 
+          treesitter.templ 
+          treesitter.javascript
+        ]))
+
+        # templ-vim
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "templ-vim";
+          version = "5cc48b93a4538adca0003c4bc27af844bb16ba24";
+          src = pkgs.fetchFromGitHub {
+            owner = "joerdav";
+            repo = "templ.vim";
+            rev = "5cc48b93a4538adca0003c4bc27af844bb16ba24";
+            sha256 = "sha256-YdV8ioQJ10/HEtKQy1lHB4Tg9GNKkB0ME8CV/+hlgYs=";
+          };
+        })
+
+        # vim-eel2
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "vim-eel2";
+          version = "2019-11-16";
+          src = pkgs.fetchFromGitHub {
+            owner = "TristanCrawford";
+            repo = "vim-eel2";
+            rev = "6865d0f3e92bb5feb0108cc20f89f69659021483";
+            sha256 = "sha256-lAekmwJxXN+Y6zIxcaJTAftA7919J4Vl1SRjdhx2X8M=";
+          };
+        })
+
+        # lsp-zero-nvim
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "lsp-zero-nvim";
+          version = "2.x";
+          src = pkgs.fetchFromGitHub {
+            owner = "VonHeikemen";
+            repo = "lsp-zero.nvim";
+            rev = "eb278c30b6c50e99fdfde52f7da0e0ff8d17c07e";
+            sha256 = "sha256-C2LvhoNdNXRyG+COqVZv/BcUh6y82tajXipsqdySJJQ=";
+          };
+        })
+
+        # bg-nvim
+        (pkgs.vimUtils.buildVimPlugin rec {
+          pname = "bg-nvim";
+          version = "1c95261cc5e3062e3b277fc5c15d180d51a40f62";
+          src = pkgs.fetchFromGitHub {
+            owner = "typicode";
+            repo = "bg.nvim";
+            rev = version; 
+            sha256 = "sha256-ZocdEdw7m6gVQap0MFr1uymIkHnX9ewjWmR7fYVR9Ko=";
+          };
+        })
+      ];
     };
 
     neovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped config;
