@@ -75,6 +75,7 @@
           treesitter.c 
           treesitter.templ 
           treesitter.javascript
+          treesitter.hyprlang
         ]))
 
         # LANGUAGE SERVER PROTOCOL
@@ -205,6 +206,14 @@
 
               # Typescript/JSDoc LSP server
               pkgs.typescript-language-server
+
+              # Hyprland conf LSP server
+              (pkgs.fetchFromGitHub {
+                owner = "hyprland-community";
+                repo = "hyprls";
+                rev = "da23c2948d2696f60816ff47bc562bb434ddb8fb";
+                sha256 = "sha256-TvrbTlMGn1XtMe5lK7/X69nezmGn51TScd06pdthaF8=";
+              })
 
               # Required by pkgs.vimPlugins.cmp-git
               pkgs.curl

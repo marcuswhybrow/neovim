@@ -133,14 +133,16 @@ lspconfig.tailwindcss.setup({
 
 lspconfig.nil_ls.setup{}
 lspconfig.bashls.setup{}
-lspconfig.html.setup({
-  filetypes = { "html" }, -- Omits implicit "templ" to prevent formatting bug
-})
 lspconfig.cssls.setup{}
 lspconfig.jsonls.setup{}
 lspconfig.eslint.setup{}
 lspconfig.yamlls.setup{}
 lspconfig.marksman.setup{}
+lspconfig.hyprls.setup{}
+
+lspconfig.html.setup({
+  filetypes = { "html" }, -- Omits implicit "templ" to prevent formatting bug
+})
 
 -- Perform Typescript checking on JavaScript
 -- https://www.reddit.com/r/neovim/comments/132ax85/comment/jiacvuy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
@@ -174,6 +176,7 @@ lspconfig.rust_analyzer.setup{
     },
   },
 }
+
 
 -- Manual formatting (instead of buffer_autoformat() above)
 --[[
