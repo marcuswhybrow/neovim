@@ -26,18 +26,6 @@
         # Makes the background of CSS colors the actual color defined
         pkgs.vimPlugins.nvim-highlight-colors 
 
-        # BG, sync your terminal background with your Neovim background color
-        (pkgs.vimUtils.buildVimPlugin rec {
-          pname = "bg-nvim";
-          version = "1c95261cc5e3062e3b277fc5c15d180d51a40f62";
-          src = pkgs.fetchFromGitHub {
-            owner = "typicode";
-            repo = "bg.nvim";
-            rev = version; 
-            sha256 = "sha256-ZocdEdw7m6gVQap0MFr1uymIkHnX9ewjWmR7fYVR9Ko=";
-          };
-        })
-
         # NAVIGATION
 
         # Popup project search box with file preview
