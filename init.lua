@@ -131,9 +131,15 @@ lspconfig.tailwindcss.setup({
   },
 })
 
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cssls
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 lspconfig.nil_ls.setup{}
 lspconfig.bashls.setup{}
-lspconfig.cssls.setup{}
+lspconfig.cssls.setup{
+  capabilities = capabilities,
+}
 lspconfig.jsonls.setup{}
 lspconfig.eslint.setup{}
 lspconfig.yamlls.setup{}
@@ -209,8 +215,8 @@ require("catppuccin").setup({
 })
 vim.cmd.colorscheme "catppuccin"
 
-vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg=0, bg="#f0f0f0" })
-vim.opt.colorcolumn = "80"
+-- vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg=0, bg="#f0f0f0" })
+-- vim.opt.colorcolumn = "80"
 
 
 -- [[gitsigns-nvim]]
