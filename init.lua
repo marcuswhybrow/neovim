@@ -34,6 +34,9 @@ vim.keymap.set("v", "<leader>d", "\"_d", { desc = '[D]elete to void register' })
 -- Unmap Q
 vim.keymap.set("n", "Q", "<nop>", { desc = 'Disable [Q] as it\'s too dangerous' })
 
+vim.keymap.set("n", "<leader><C-d>", ":set bg=dark<CR>", { desc = 'Set theme to [D]ark mode' })
+vim.keymap.set("n", "<leader><C-l>", ":set bg=light<CR>", { desc = 'Set theme to [L]ight mode' })
+
 --vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 -- https://neovim.io/doc/user/quickfix.html
