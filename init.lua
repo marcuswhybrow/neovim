@@ -266,7 +266,7 @@ local filename = {
     unnamed = '[No Name]',
     newfile = '[New]',
   },
-  padding = { left = 1, right = 0 },
+  padding = { left = 0, right = 0 },
 }
 
 local filetype = {
@@ -328,8 +328,13 @@ local progress = {
   padding = { left = 1, right = 0 },
 }
 
-local active = { bg = '#eaeaed', fg = '#000000' }
-local inactive = { bg = '#eeeeee', fg = '#000000' }
+local mode = {
+  'mode',
+  padding = { left = 0, right = 1 },
+}
+
+local active = { bg = 'default', fg = 'default' }
+local inactive = { bg = 'default', fg = 'default' }
 local insert = { fg = '#000000', bg = '#80a0ff' }
 local visual = { fg = '#000000', bg = '#79dac8' }
 local replace = { fg = '#000000', bg = '#ff5189' }
@@ -342,60 +347,66 @@ local allParts = function(s)
   return { a = s, b = s, c = s, x = s, y = s, z = s }
 end
 
+local firstPart = function(a, b)
+  return { a = a, b = b, c = b, x = b, y = b, z = b }
+end
+
 require('lualine').setup({
   options = {
     globalstatus = false,
     component_separators = '',
-    -- section_separators = '',
-    section_separators = { left = '', right = '' },
+    section_separators = '',
+    -- section_separators = { left = '', right = '' },
     always_divide_middle = true,
     
-    theme = "catppuccin",
+    -- theme = "catppuccin",
 
-    -- theme = {
-    --   normal = {
-    --     a = active,
-    --     b = active,
-    --     c = active,
-    --     x = active,
-    --     y = active,
-    --     z = active,
-    --   },
+    theme = {
+      normal = {
+        a = active,
+        b = active,
+        c = active,
+        x = active,
+        y = active,
+        z = active,
+      },
 
-    --   insert = allParts(insert),
-    --   visual = allParts(visual),
-    --   replace = allParts(replace),
+      insert = firstPart(insert, active),
+      visual = firstPart(visual, active),
+      replace = firstPart(replace, active),
 
-    --   inactive = {
-    --     a = inactive,
-    --     b = inactive,
-    --     c = inactive,
-    --     x = inactive,
-    --     y = inactive,
-    --     z = inactive,
-    --   },
-    -- },
+      inactive = {
+        a = inactive,
+        b = inactive,
+        c = inactive,
+        x = inactive,
+        y = inactive,
+        z = inactive,
+      },
+    },
   },
+
+  -- sections = {},
+  -- inactive_sections = {},
 
   sections = {
     lualine_a = {
       filename,
     },
     lualine_b = {
-      filetype,
-      branch,
-      diff,
+      progress,
+      location,
+      -- filetype,
+      -- branch,
+      -- diff,
     },
     lualine_c = {
       diagnostics,
     },
     lualine_x = {},
     lualine_y = {
-      progress,
-      location,
     },
     lualine_z = {
-      'mode',
     },
   },
 
