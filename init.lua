@@ -514,6 +514,20 @@ vim.o.foldenable = false
 
 -- [[neo-tree-nvim]]
 
+require('neo-tree').setup({
+  window = {
+    mappings = {
+      ["A"]  = "git_add_all",
+      ["gu"] = "git_unstage_file",
+      ["ga"] = "git_add_file",
+      ["gr"] = "git_revert_file",
+      ["gc"] = "git_commit",
+      ["gp"] = "git_push",
+      ["gg"] = "git_commit_and_push"
+    }
+  }
+})
+
 vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Toggle open Neo[T]ree file browser' })
 
 -- [[telescope-nvim]]
