@@ -512,6 +512,10 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.o.foldenable = false
 
+-- [[neo-tree-nvim]]
+
+vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Toggle open Neo[T]ree file browser' })
+
 -- [[telescope-nvim]]
 
 local telescopeBuiltin = require('telescope.builtin')

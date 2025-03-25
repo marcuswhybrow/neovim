@@ -28,6 +28,9 @@
 
         # NAVIGATION
 
+        # Manage the file system and other tree like structures
+        pkgs.vimPlugins.neo-tree-nvim
+
         # Popup project search box with file preview
         pkgs.vimPlugins.telescope-nvim
 
