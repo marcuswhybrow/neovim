@@ -610,3 +610,7 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = 'Move cursor to the window to th
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = 'Move cursor to the window to the right' })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = 'Move cursor to the window below' })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move cursor to the window above' })
+
+require("auto-dark-mode").setup({
+  fallback = "light"
+})
