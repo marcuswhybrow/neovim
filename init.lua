@@ -518,6 +518,23 @@ vim.o.foldenable = false
 -- [[neo-tree-nvim]]
 
 require('neo-tree').setup({
+  filesystem = {
+    -- Default behaviour when opening Neovim on a directory is to replace 
+    -- the NetRW file browser with a neo-tree window to the left and a
+    -- window to the right. This requires closing two windows to exit.
+    -- 
+    -- "open_current" opens one window with neo-tree: only one thing to close!
+    hijack_netrw_behavior = "open_current",
+  },
+  event_handlers = {
+    { -- Make neo-tree's background the same as the theme's
+      event = "before_render",
+      handler = function()
+        vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE" })
+        vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE" })
+      end,
+    },
+  },
   window = {
     mappings = {
       ["A"]  = "git_add_all",
