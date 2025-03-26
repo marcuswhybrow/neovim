@@ -34,8 +34,11 @@ vim.keymap.set("v", "<leader>d", "\"_d", { desc = '[D]elete to void register' })
 -- Unmap Q
 vim.keymap.set("n", "Q", "<nop>", { desc = 'Disable [Q] as it\'s too dangerous' })
 
-vim.keymap.set("n", "<leader><C-d>", ":set bg=dark<CR>", { desc = 'Set theme to [D]ark mode' })
-vim.keymap.set("n", "<leader><C-l>", ":set bg=light<CR>", { desc = 'Set theme to [L]ight mode' })
+vim.keymap.set("n", "<leader>td", ":set bg=dark<CR>", { desc = 'Set theme to [D]ark mode' })
+vim.keymap.set("n", "<leader>tl", ":set bg=light<CR>", { desc = 'Set theme to [L]ight mode' })
+
+
+
 
 --vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
@@ -528,7 +531,7 @@ require('neo-tree').setup({
   }
 })
 
-vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Toggle open Neo[T]ree file browser' })
+vim.keymap.set('n', 'b', ':Neotree toggle<CR>', { desc = 'Toggle open NeoTree file [B]rowser' })
 
 -- [[telescope-nvim]]
 
@@ -589,3 +592,21 @@ for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) d
         return default_diagnostic_handler(err, result, context, config)
     end
 end
+
+-- Window splitting, moving, and navigating
+-- <C-h>/<C-l>/etc. must come last to override something implicit above
+
+vim.keymap.set("n", "<leader>sh", ":vsplit<CR>", { desc = '[S]plit window to the left' })
+vim.keymap.set("n", "<leader>sl", ":vsplit<CR><C-w>l", { desc = '[S]plit window to the right' })
+vim.keymap.set("n", "<leader>sj", ":split<CR><C-w>j", { desc = '[S]plit Add window below' })
+vim.keymap.set("n", "<leader>sk", ":split<CR>", { desc = '[S]plit window above' })
+
+vim.keymap.set("n", "<leader>wh", "<C-w>H", { desc = 'Move [W]indow to the far left' })
+vim.keymap.set("n", "<leader>wl", "<C-w>L", { desc = 'Move [W]indow to the far right' })
+vim.keymap.set("n", "<leader>wj", "<C-w>J", { desc = 'Move [W]indow to the bottom' })
+vim.keymap.set("n", "<leader>wk", "<C-W>K", { desc = 'Move [W]indow to the top' })
+
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = 'Move cursor to the window to the left' })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = 'Move cursor to the window to the right' })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = 'Move cursor to the window below' })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move cursor to the window above' })
