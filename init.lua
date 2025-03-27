@@ -336,12 +336,8 @@ local mode = {
   padding = { left = 0, right = 1 },
 }
 
-local active = { bg = 'default', fg = 'default' }
-local inactive = { bg = 'default', fg = 'default' }
-local insert = { fg = '#000000', bg = '#80a0ff' }
-local visual = { fg = '#000000', bg = '#79dac8' }
-local replace = { fg = '#000000', bg = '#ff5189' }
-local command = { fg = '#000000', bg = '#d183e8' }
+local comment_color = 'Comment'
+local default_color = { fg = 'default', bg = 'default' }
 
 vim.api.nvim_set_hl(0, "StatusLine", { bg = '#dddddd' })
 vim.api.nvim_command('hi SignColumn ctermbg=none')
@@ -365,27 +361,11 @@ require('lualine').setup({
     -- theme = "catppuccin",
 
     theme = {
-      normal = {
-        a = active,
-        b = active,
-        c = active,
-        x = active,
-        y = active,
-        z = active,
-      },
-
-      insert = firstPart(insert, active),
-      visual = firstPart(visual, active),
-      replace = firstPart(replace, active),
-
-      inactive = {
-        a = inactive,
-        b = inactive,
-        c = inactive,
-        x = inactive,
-        y = inactive,
-        z = inactive,
-      },
+      normal = allParts(comment_color),
+      inactive = allParts(comment_color),
+      insert = allParts(comment_color),
+      visual = allParts(comment_color),
+      replace = allParts(comment_color),
     },
   },
 
@@ -543,12 +523,14 @@ require('neo-tree').setup({
       ["gr"] = "git_revert_file",
       ["gc"] = "git_commit",
       ["gp"] = "git_push",
-      ["gg"] = "git_commit_and_push"
+      ["gg"] = "git_commit_and_push",
+      ["<C-b>"] = "close_window",
     }
   }
 })
 
-vim.keymap.set('n', 'b', ':Neotree toggle<CR>', { desc = 'Toggle open NeoTree file [B]rowser' })
+vim.keymap.set('n', '<C-b>', ':Neotree toggle<CR>', { desc = 'Toggle open NeoTree file [B]rowser' })
+
 
 -- [[telescope-nvim]]
 
@@ -631,3 +613,4 @@ vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move cursor to the window above
 require("auto-dark-mode").setup({
   fallback = "light"
 })
+
