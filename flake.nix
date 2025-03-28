@@ -38,6 +38,9 @@
         # Makes the background of CSS colors the actual color defined
         pkgs.vimPlugins.nvim-highlight-colors 
 
+        # Interactively shows possible key bindngs
+        pkgs.vimPlugins.which-key-nvim
+
         # NAVIGATION
 
         # Manage the file system and other tree like structures

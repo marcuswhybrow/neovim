@@ -614,3 +614,15 @@ require("auto-dark-mode").setup({
   fallback = "light"
 })
 
+-- [[which-key]]
+
+require("which-key").setup({
+  delay = 0,
+  spec = {
+    { "<leader>g", group = "[G]it commands" },
+    { "<leader>f", group = "[F]ind files/words/keymaps/etc." },
+    { "<leader>t", group = "[T]heme change to [L]ight or [D]ark" },
+    { "<leader>w", group = "Move [W]indows using [HJKL]" },
+  },
+})
+
