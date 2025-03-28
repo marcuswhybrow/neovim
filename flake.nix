@@ -93,6 +93,17 @@
         # Lists project-wide LSP errors for you to fix
         pkgs.vimPlugins.trouble-nvim
 
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "tiny-inline-diagnostic";
+          version = "2019-11-16";
+          src = pkgs.fetchFromGitHub {
+            owner = "rachartier";
+            repo = "tiny-inline-diagnostic.nvim";
+            rev = "5d168a2826fb90691f674e81bd5c1dfa6d931c61";
+            sha256 = "sha256-WWT/RGP4+OB6CvEKvGed+aD0Yf30AQvnOcOKZ/gjggk=";
+          };
+        })
+
         # COMPLETION
 
         # Code completion popup

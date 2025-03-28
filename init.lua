@@ -633,3 +633,23 @@ require("which-key").setup({
   },
 })
 
+-- [[tiny-inline-diagnostic]]
+
+vim.diagnostic.config({ virtual_text = false })
+
+require("tiny-inline-diagnostic").setup({
+  preset = "powerline", -- modern/classic/minimal/powerline/ghost/simple/nonerdfont/amongus
+  multilines = {
+    enable = true,
+    always_show = false,
+  },
+  show_all_diags_on_cursorline = false,
+  overflow = {
+    mode = "wrap", -- wrap/none/oneline
+  },
+  break_line = {
+    enabled = false,
+    after = 30,
+  },
+})
+
