@@ -218,10 +218,23 @@ require("catppuccin").setup({
     dark = "mocha",
   },
   transparent_background = false; -- use different plugin
+  custom_highlights = function(colors)
+    return {
+      TelescopeBorder = { link = "Comment" },
+      NeoTreeNormal = { bg = "NONE" },
+      NeoTreeNormalNC = { bg = "NONE" },
+      NeoTreeStatusLineNC = { bg = "NONE" },
+      MsgArea = { link = "Comment" },
+      ModeMsg = { link = "Comment" },
+      StatusLine = { bg = "NONE" },
+      StatusLineNC = { bg = "NONE" },
+      WinSeparator = { fg = "bg" },
+      ColorColumn = { ctermbg = "black" },
+    }
+  end
 })
 vim.cmd.colorscheme "catppuccin"
 
--- vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg=0, bg="#f0f0f0" })
 -- vim.opt.colorcolumn = "80"
 
 
@@ -506,15 +519,6 @@ require('neo-tree').setup({
     -- "open_current" opens one window with neo-tree: only one thing to close!
     hijack_netrw_behavior = "open_current",
   },
-  event_handlers = {
-    { -- Make neo-tree's background the same as the theme's
-      event = "before_render",
-      handler = function()
-        vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE" })
-        vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE" })
-      end,
-    },
-  },
   window = {
     mappings = {
       ["A"]  = "git_add_all",
@@ -544,6 +548,9 @@ vim.keymap.set('n', '<leader>fk', telescopeBuiltin.keymaps, { desc = '[F]ind [K]
 
 vim.keymap.set('n', '<leader>ba>', 'ysiw]ysiw]', { desc = 'Surround inner word with double brackets' })
 vim.keymap.set('n', '<leader>bd', 'ds]ds]', { desc = 'Delete inner word\'s double brackets' })
+
+vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#ff0000" })
+vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#ff0000" })
 
 -- [[templ-vim]]
 
