@@ -93,14 +93,27 @@
         # Lists project-wide LSP errors for you to fix
         pkgs.vimPlugins.trouble-nvim
 
+        # Better (multiline) inline LSP diagnostics 
         (pkgs.vimUtils.buildVimPlugin {
           pname = "tiny-inline-diagnostic";
-          version = "2019-11-16";
+          version = "2025-03-11";
           src = pkgs.fetchFromGitHub {
             owner = "rachartier";
             repo = "tiny-inline-diagnostic.nvim";
             rev = "5d168a2826fb90691f674e81bd5c1dfa6d931c61";
             sha256 = "sha256-WWT/RGP4+OB6CvEKvGed+aD0Yf30AQvnOcOKZ/gjggk=";
+          };
+        })
+
+        # Preview and exectue LSP code actions
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "tiny-code-action";
+          version = "2019-11-16";
+          src = pkgs.fetchFromGitHub {
+            owner = "rachartier";
+            repo = "tiny-code-action.nvim";
+            rev = "cc2f6045e67e01355c49fea10568baba856e844a";
+            sha256 = "sha256-JBGP8alg8REwBsfKPpDoxPDQtImvh1etyhK9U/YA1c4=";
           };
         })
 
@@ -240,6 +253,9 @@
 
               # Required by the fuzzy finder search for pkgs.vimPlugins.telescope-nvim
               pkgs.fzf
+
+              # Required by tiny-code-action for code action previews
+              pkgs.delta
             ]}
 
           # Alias vim to nvim

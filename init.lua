@@ -630,6 +630,7 @@ require("which-key").setup({
     { "<leader>f", group = "[F]ind files/words/keymaps/etc." },
     { "<leader>t", group = "[T]heme change to [L]ight or [D]ark" },
     { "<leader>w", group = "Move [W]indows using [HJKL]" },
+    { "<leader>c", group = "LSP [C]ode actions" },
   },
 })
 
@@ -653,3 +654,13 @@ require("tiny-inline-diagnostic").setup({
   },
 })
 
+-- [[tiny-code-action]]
+
+local tiny_code_action = require("tiny-code-action")
+tiny_code_action.setup({
+  backend = "delta", -- vim/delta/difftastic
+})
+
+vim.keymap.set("n", "<leader>ca", function()
+  tiny_code_action.code_action()
+end, { noremap = true, silent = true, desc = "Open LSP [C]ode [A]ctions" })
