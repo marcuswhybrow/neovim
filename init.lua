@@ -105,17 +105,41 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<cr>", { buffer = true })
 end)
 
+-- [[lsp-status]]
+-- Must occur before lspconfig setup
+
+-- local lsp_status = require("lsp-status")
+-- lsp_status.config({
+--   show_filename = true,
+-- })
+
+-- lsp_status.register_progress()
+
 -- [[nvim-lspconfig]]
+-- Must occur after lsp-status setup
 
 local lspconfig = require('lspconfig')
 
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cssls
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- capabilities = vim.tbl_extend("keep", capabilities or {}, lsp_status.capabilities)
+
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-lspconfig.gopls.setup{}
+lspconfig.gopls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
 
 -- https://templ.guide/commands-and-tools/ide-support#neovim--050
-lspconfig.templ.setup{}
+lspconfig.templ.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
 
 lspconfig.tailwindcss.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities,
   filetypes = {
     'templ',
     'html',
@@ -137,37 +161,68 @@ lspconfig.tailwindcss.setup({
   },
 })
 
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cssls
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-lspconfig.nil_ls.setup{}
-lspconfig.bashls.setup{}
-lspconfig.cssls.setup{
-  capabilities = capabilities,
-}
-lspconfig.jsonls.setup{}
-lspconfig.eslint.setup{}
-lspconfig.yamlls.setup{}
-lspconfig.marksman.setup{}
-lspconfig.hyprls.setup{}
+lspconfig.nil_ls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.bashls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.cssls.setup({
+  -- capabilities = capabilities,
+})
+lspconfig.jsonls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.eslint.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.yamlls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.marksman.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
+lspconfig.hyprls.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities
+})
 
 lspconfig.html.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities,
   filetypes = { "html" }, -- Omits implicit "templ" to prevent formatting bug
 })
 
--- Perform Typescript checking on JavaScript
--- https://www.reddit.com/r/neovim/comments/132ax85/comment/jiacvuy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-lspconfig.tsserver.setup{
-  settings = {
-    implicitProjectConfiguration = {
-      target = "ES2021",
-      checkJs = true
-    }
-  }
-}
+-- -- Perform Typescript checking on JavaScript
+-- -- https://www.reddit.com/r/neovim/comments/132ax85/comment/jiacvuy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+-- lspconfig.tsserver.setup({
+--   on_attach = lsp_status.on_attach,
+--   settings = {
+--     implicitProjectConfiguration = {
+--       target = "ES2021",
+--       checkJs = true
+--     }
+--   },
+--   capabilities
+-- })
+lspconfig.ts_ls.setup({
+  -- on_attach = lsp_status.on_attach,
+  compilerOptions = {
+    target = "ES2021",
+    checkJs = true
+  },
+  -- capabilities
+})
 
-lspconfig.rust_analyzer.setup{
+lspconfig.rust_analyzer.setup({
+  -- on_attach = lsp_status.on_attach,
+  -- capabilities,
   settings = {
     ['rust-analyzer'] = {
       diagnostics = {
@@ -187,7 +242,7 @@ lspconfig.rust_analyzer.setup{
       },
     },
   },
-}
+})
 
 
 -- Manual formatting (instead of buffer_autoformat() above)
@@ -270,6 +325,19 @@ vim.keymap.set('n', '<Leader>s', function()
   end
 end, { desc = '[S]how status line' })
 
+local comment_color = 'Comment'
+local default_color = { fg = 'default', bg = 'default' }
+
+vim.api.nvim_command('hi SignColumn ctermbg=none')
+
+local allParts = function(s)
+  return { a = s, b = s, c = s, x = s, y = s, z = s }
+end
+
+local firstPart = function(a, b)
+  return { a = a, b = b, c = b, x = b, y = b, z = b }
+end
+
 local filename = {
   'filename',
   file_status = true,
@@ -284,84 +352,6 @@ local filename = {
   },
   padding = { left = 0, right = 0 },
 }
-
-local filetype = {
-  'filetype',
-  colored = false,
-  icon_only = true,
-  padding = { left = 1, right = 1 },
-}
-
-local diff = {
-  'diff',
-  colored = false,
-  diff_color = {
-    added    = 'DiffAdd',
-    modified = 'DiffChange',
-    removed  = 'DiffDelete',
-  },
-  symbols = {
-    added = '+',
-    modified = '~',
-    removed = '-'
-  },
-}
-
-local branch = {
-  'branch',
-  icon = { '', align='right' },
-  padding = { left = 1, right = 0 },
-}
-
-local diagnostics = {
-  sources = { 'nvim_lsp', 'nvim_diagnostic' },
-  sections = { 'error', 'warn', 'info', 'hint' },
-
-  diagnostics_color = {
-    error = 'DiagnosticError',
-    warn  = 'DiagnosticWarn',
-    info  = 'DiagnosticInfo',
-    hint  = 'DiagnosticHint',
-  },
-  symbols = {
-    error = 'E',
-    warn = 'W',
-    info = 'I',
-    hint = 'H'
-  },
-  colored = true,
-  update_in_insert = false,
-  always_visible = true,
-}
-
-local location = {
-  'location',
-  padding = { left = 0, right = 1 },
-}
-
-local progress = {
-  'progress',
-  padding = { left = 1, right = 0 },
-}
-
-local mode = {
-  'mode',
-  padding = { left = 0, right = 1 },
-}
-
-local comment_color = 'Comment'
-local default_color = { fg = 'default', bg = 'default' }
-
-vim.api.nvim_set_hl(0, "StatusLine", { bg = '#dddddd' })
-vim.api.nvim_command('hi SignColumn ctermbg=none')
-
-local allParts = function(s)
-  return { a = s, b = s, c = s, x = s, y = s, z = s }
-end
-
-local firstPart = function(a, b)
-  return { a = a, b = b, c = b, x = b, y = b, z = b }
-end
 
 require('lualine').setup({
   options = {
@@ -390,20 +380,55 @@ require('lualine').setup({
       filename,
     },
     lualine_b = {
-      progress,
-      location,
+      { 'progress', padding = { left = 1, right = 1 } },
+      { 'location', padding = { left = 0, right = 0 } },
+      { 
+        "lsp_status",
+        padding = { left = 0, right = 1 },
+        icon = '', -- f013
+        symbols = {
+          -- Standard unicode symbols to cycle through for LSP progress:
+          spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },
+          -- Standard unicode symbol for when LSP is done:
+          done = '✓',
+          -- Delimiter inserted between LSP names:
+          separator = ' ',
+        },
+      },
+      {
+        'diagnostics',
+        padding = { left = 0, right = 0 },
+
+        -- Table of diagnostic sources, available sources are:
+        --   'nvim_lsp', 'nvim_diagnostic', 'nvim_workspace_diagnostic', 'coc', 'ale', 'vim_lsp'.
+        -- or a function that returns a table as such:
+        --   { error=error_cnt, warn=warn_cnt, info=info_cnt, hint=hint_cnt }
+        sources = { 'nvim_lsp', 'nvim_diagnostic' },
+
+        -- Displays diagnostics for the defined severity types
+        sections = { 'error', 'warn', 'info', 'hint' },
+
+        diagnostics_color = {
+          -- Same values as the general color option can be used here.
+          error = 'Comment', -- Changes diagnostics' error color.
+          warn  = 'Comment',  -- Changes diagnostics' warn color.
+          info  = 'Comment',  -- Changes diagnostics' info color.
+          hint  = 'Comment',  -- Changes diagnostics' hint color.
+        },
+        symbols = {error = 'e', warn = 'w', info = 'i', hint = 'h'},
+        colored = true,           -- Displays diagnostics status in color if set to true.
+        update_in_insert = false, -- Update diagnostics in insert mode.
+        always_visible = false,   -- Show diagnostics even if there are none.
+      },
       -- filetype,
       -- branch,
       -- diff,
     },
     lualine_c = {
-      diagnostics,
     },
     lualine_x = {},
-    lualine_y = {
-    },
-    lualine_z = {
-    },
+    lualine_y = {},
+    lualine_z = {},
   },
 
   inactive_sections = {
@@ -545,6 +570,7 @@ vim.keymap.set('n', '<leader>fg', telescopeBuiltin.live_grep, { desc = '[F]ind u
 vim.keymap.set('n', '<leader>fb', telescopeBuiltin.buffers, { desc = '[F]ind within all [B]uffers' })
 vim.keymap.set('n', '<leader>fh', telescopeBuiltin.help_tags, { desc = '[F]ind within [H]elp tags' })
 vim.keymap.set('n', '<leader>fk', telescopeBuiltin.keymaps, { desc = '[F]ind [K]eymaps' })
+vim.keymap.set('n', '<leader>fd', telescopeBuiltin.diagnostics, { desc = '[F]ind [D]iagnostics' })
 
 vim.keymap.set('n', '<leader>ba>', 'ysiw]ysiw]', { desc = 'Surround inner word with double brackets' })
 vim.keymap.set('n', '<leader>bd', 'ds]ds]', { desc = 'Delete inner word\'s double brackets' })
@@ -636,7 +662,9 @@ require("which-key").setup({
 
 -- [[tiny-inline-diagnostic]]
 
-vim.diagnostic.config({ virtual_text = false })
+vim.diagnostic.config({ 
+  virtual_text = false,
+})
 
 require("tiny-inline-diagnostic").setup({
   preset = "powerline", -- modern/classic/minimal/powerline/ghost/simple/nonerdfont/amongus
@@ -664,3 +692,142 @@ tiny_code_action.setup({
 vim.keymap.set("n", "<leader>ca", function()
   tiny_code_action.code_action()
 end, { noremap = true, silent = true, desc = "Open LSP [C]ode [A]ctions" })
+
+-- [[fidget--nvim]]
+
+-- https://github.com/j-hui/fidget.nvim?tab=readme-ov-file#options
+require("fidget").setup({
+  -- Options related to LSP progress subsystem
+  progress = {
+    poll_rate = 0,                -- How and when to poll for progress messages
+    suppress_on_insert = false,   -- Suppress new messages while in insert mode
+    ignore_done_already = false,  -- Ignore new tasks that are already complete
+    ignore_empty_message = false, -- Ignore new tasks that don't contain a message
+    clear_on_detach =             -- Clear notification group when LSP server detaches
+      function(client_id)
+        local client = vim.lsp.get_client_by_id(client_id)
+        return client and client.name or nil
+      end,
+    notification_group =          -- How to get a progress message's notification group key
+      function(msg) return msg.lsp_client.name end,
+    ignore = {},                  -- List of LSP servers to ignore
+
+    -- Options related to how LSP progress messages are displayed as notifications
+    display = {
+      render_limit = 16,          -- How many LSP messages to show at once
+      done_ttl = 0.2,               -- How long a message should persist after completion
+      done_icon = "",            -- Icon shown when all LSP progress tasks are complete
+      done_style = "LineNr",    -- Highlight group for completed LSP tasks
+      progress_ttl = math.huge,   -- How long a message should persist when in progress
+      progress_icon =             -- Icon shown when LSP progress tasks are in progress
+        { "dots" },
+      progress_style =            -- Highlight group for in-progress LSP tasks
+        "LineNr",
+      group_style = "LineNr",      -- Highlight group for group name (LSP server name)
+      icon_style = "LineNr",    -- Highlight group for group icons
+      priority = 30,              -- Ordering priority for LSP notification group
+      skip_history = true,        -- Whether progress notifications should be omitted from history
+      format_message =            -- How to format a progress message
+        require("fidget.progress.display").default_format_message,
+      format_annote =             -- How to format a progress annotation
+        function(msg) return msg.title end,
+      format_group_name =         -- How to format a progress notification group's name
+        function(group) return tostring(group) end,
+      overrides = {               -- Override options from the default notification config
+        rust_analyzer = { name = "rust-analyzer" },
+      },
+    },
+
+    -- Options related to Neovim's built-in LSP client
+    lsp = {
+      progress_ringbuf_size = 0,  -- Configure the nvim's LSP progress ring buffer size
+      log_handler = false,        -- Log `$/progress` handler invocations (for debugging)
+    },
+  },
+
+  -- Options related to notification subsystem
+  notification = {
+    poll_rate = 10,               -- How frequently to update and render notifications
+    filter = vim.log.levels.INFO, -- Minimum notifications level
+    history_size = 128,           -- Number of removed messages to retain in history
+    override_vim_notify = false,  -- Automatically override vim.notify() with Fidget
+    configs =                     -- How to configure notification groups when instantiated
+      { default = require("fidget.notification").default_config },
+    redirect =                    -- Conditionally redirect notifications to another backend
+      function(msg, level, opts)
+        if opts and opts.on_open then
+          return require("fidget.integration.nvim-notify").delegate(msg, level, opts)
+        end
+      end,
+
+    -- Options related to how notifications are rendered as text
+    view = {
+      stack_upwards = true,       -- Display notification items from bottom to top
+      icon_separator = " ",       -- Separator between group name and icon
+      group_separator = "---",    -- Separator between notification groups
+      group_separator_hl =        -- Highlight group used for group separator
+        "LineNr",
+      render_message =            -- How to render notification messages
+        function(msg, cnt)
+          return cnt == 1 and msg or string.format("(%dx) %s", cnt, msg)
+        end,
+    },
+
+    -- Options related to the notification window and buffer
+    window = {
+      normal_hl = "LineNr",      -- Base highlight group in the notification window
+      winblend = 100,             -- Background color opacity in the notification window
+      border = "none",            -- Border around the notification window
+      zindex = 45,                -- Stacking priority of the notification window
+      max_width = 0,              -- Maximum width of the notification window
+      max_height = 0,             -- Maximum height of the notification window
+      x_padding = 1,              -- Padding from right edge of window boundary
+      y_padding = 0,              -- Padding from bottom edge of window boundary
+      align = "bottom",           -- How to align the notification window
+      relative = "editor",        -- What the notification window position is relative to
+    },
+  },
+
+  -- Options related to integrating with other plugins
+  integration = {
+    ["nvim-tree"] = {
+      enable = false,              -- Integrate with nvim-tree/nvim-tree.lua (if installed)
+    },
+    ["xcodebuild-nvim"] = {
+      enable = false,              -- Integrate with wojciech-kulik/xcodebuild.nvim (if installed)
+    },
+  },
+
+  -- Options related to logging
+  logger = {
+    level = vim.log.levels.WARN,  -- Minimum logging level
+    max_size = 10000,             -- Maximum log file size, in KB
+    float_precision = 0.01,       -- Limit the number of decimals displayed for floats
+    path =                        -- Where Fidget writes its logs to
+      string.format("%s/fidget.nvim.log", vim.fn.stdpath("cache")),
+  },
+})
+require("fidget.notification").suppress(true);
+require("telescope").load_extension("fidget")
+vim.keymap.set("n", "<leader>fm", function()
+  require("telescope").extensions.fidget.fidget()
+end, { noremap = true, silent = true, desc = "[F]ind (LSP) [M]essages" })
+
+
+-- [[diagnostics]]
+
+vim.keymap.set("n", "<C-Up>", function() 
+  local diagnostic = vim.diagnostic.get_prev()
+  if diagnostic ~= nil then
+    vim.diagnostic.jump({ diagnostic = diagnostic })
+  end
+end, { desc = "Go to prev diagnostic" })
+
+vim.keymap.set("n", "<C-Down>", function() 
+  local diagnostic = vim.diagnostic.get_next()
+  if diagnostic ~= nil then
+    vim.diagnostic.jump({ diagnostic = diagnostic })
+  end
+end, { desc = "Go to next diagnostic" })
+
+vim.keymap.set("n", "<C-Right>", function() tiny_code_action.code_action() end, { desc = "Open LSP code action picker" })

@@ -14,11 +14,32 @@
       withPython3 = false; 
       withRuby = false;
 
+      extraLuaPackages = luaPackages: [
+        # pkgs.vimPlugins.telescope-nvim
+        luaPackages.telescope-nvim
+      ];
+
       plugins = [
         # USER INTERFACE
 
         # Custom status line configuration (very important)
-        pkgs.vimPlugins.lualine-nvim
+        # pkgs.vimPlugins.lualine-nvim # Not new enough
+        (pkgs.vimUtils.buildVimPlugin {
+          pname = "lualine-nvim";
+          version = "2025-03-27";
+          src = pkgs.fetchFromGitHub {
+            owner = "nvim-lualine";
+            repo = "lualine.nvim";
+            rev = "1517caa8fff05e4b4999857319d3b0609a7f57fa";
+            sha256 = "sha256-DAYRf8JIty6W78JXBSyfnyCryUUYX+QrsHSAlcOk7Fc=";
+          };
+        })
+
+        # LSP & Message viewer
+        pkgs.vimPlugins.fidget-nvim
+
+        # LSP readout for vim status line 
+        pkgs.vimPlugins.lsp-status-nvim
 
         # Color theme
         pkgs.vimPlugins.catppuccin-nvim
@@ -109,6 +130,7 @@
         (pkgs.vimUtils.buildVimPlugin {
           pname = "tiny-code-action";
           version = "2019-11-16";
+          doCheck = false; # Error's looking for `require("telescope")`
           src = pkgs.fetchFromGitHub {
             owner = "rachartier";
             repo = "tiny-code-action.nvim";
