@@ -662,24 +662,29 @@ require("which-key").setup({
 
 -- [[tiny-inline-diagnostic]]
 
-vim.diagnostic.config({ 
-  virtual_text = false,
-})
+-- vim.diagnostic.config({ 
+--   virtual_text = false,
+--   virtual_lines = {
+--     current_line = false,
+--   }
+-- })
 
 require("tiny-inline-diagnostic").setup({
   preset = "powerline", -- modern/classic/minimal/powerline/ghost/simple/nonerdfont/amongus
-  multilines = {
-    enable = true,
-    always_show = false,
-  },
-  show_all_diags_on_cursorline = false,
-  overflow = {
-    mode = "wrap", -- wrap/none/oneline
-  },
-  break_line = {
-    enabled = false,
-    after = 30,
-  },
+  options = {
+    multilines = {
+      enabled = true,
+      always_show = true,
+    },
+    show_all_diags_on_cursorline = false,
+    overflow = {
+      mode = "wrap", -- wrap/none/oneline
+    },
+    break_line = {
+      enabled = false,
+      after = 30,
+    },
+  }
 })
 
 -- [[tiny-code-action]]
