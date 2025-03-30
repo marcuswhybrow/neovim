@@ -275,6 +275,7 @@ require("catppuccin").setup({
   transparent_background = false; -- use different plugin
   custom_highlights = function(colors)
     return {
+      AttentionGrab = { fg = "fg", style = { "bold" }, bg = "NONE" },
       TelescopeBorder = { link = "Comment" },
       NeoTreeNormal = { bg = "NONE" },
       NeoTreeNormalNC = { bg = "NONE" },
@@ -410,7 +411,7 @@ require('lualine').setup({
 
         diagnostics_color = {
           -- Same values as the general color option can be used here.
-          error = 'Comment', -- Changes diagnostics' error color.
+          error = 'AttentionGrab', -- Changes diagnostics' error color.
           warn  = 'Comment',  -- Changes diagnostics' warn color.
           info  = 'Comment',  -- Changes diagnostics' info color.
           hint  = 'Comment',  -- Changes diagnostics' hint color.
