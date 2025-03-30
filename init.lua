@@ -263,7 +263,7 @@ lsp.set_sign_icons({
 
 lsp.setup()
 
-vim.keymap.set("n", "lr", ":LspRestart<cr>", { desc = "[L]SP [R]estart" })
+vim.keymap.set("n", "<leader>lr", ":LspRestart<cr>", { desc = "[L]SP [R]estart" })
 
 -- [[catppuccin-nvim]]
 
@@ -354,6 +354,13 @@ local filename = {
   padding = { left = 0, right = 0 },
 }
 
+local function location()
+  local buf_total_lines = vim.fn.line('$')
+  local buf_line = vim.fn.line('.')
+  local buf_col = vim.fn.virtcol('.')
+  return string.format("%d/%d:%d", buf_line, buf_total_lines, buf_col)
+end
+
 require('lualine').setup({
   options = {
     globalstatus = false,
@@ -381,8 +388,9 @@ require('lualine').setup({
       filename,
     },
     lualine_b = {
-      { 'progress', padding = { left = 1, right = 1 } },
-      { 'location', padding = { left = 0, right = 0 } },
+      -- { 'progress', padding = { left = 1, right = 1 } },
+      -- { 'location', padding = { left = 0, right = 0 } },
+      { location, padding = { left = 1, right = 0 } },
       { 
         "lsp_status",
         padding = { left = 0, right = 1 },
