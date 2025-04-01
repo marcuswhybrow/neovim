@@ -584,9 +584,6 @@ vim.keymap.set('n', '<leader>fd', telescopeBuiltin.diagnostics, { desc = '[F]ind
 vim.keymap.set('n', '<leader>ba>', 'ysiw]ysiw]', { desc = 'Surround inner word with double brackets' })
 vim.keymap.set('n', '<leader>bd', 'ds]ds]', { desc = 'Delete inner word\'s double brackets' })
 
-vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#ff0000" })
-vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#ff0000" })
-
 -- [[templ-vim]]
 
 vim.api.nvim_create_autocmd(
