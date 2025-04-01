@@ -647,10 +647,11 @@ vim.keymap.set("n", "<leader>wl", "<C-w>L", { desc = 'Move [W]indow to the far r
 vim.keymap.set("n", "<leader>wj", "<C-w>J", { desc = 'Move [W]indow to the bottom' })
 vim.keymap.set("n", "<leader>wk", "<C-W>K", { desc = 'Move [W]indow to the top' })
 
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = 'Move cursor to the window to the left' })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = 'Move cursor to the window to the right' })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = 'Move cursor to the window below' })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move cursor to the window above' })
+-- https://github.com/christoomey/vim-tmux-navigator/?tab=readme-ov-file#lazynvim
+vim.keymap.set("n", "<C-h>", "<cmd><C-U>TmuxNavigateLeft<cr>", { desc = 'Move cursor to the window to the left' })
+vim.keymap.set("n", "<C-l>", "<cmd><C-U>TmuxNavigateRight<cr>", { desc = 'Move cursor to the window to the right' })
+vim.keymap.set("n", "<C-j>", "<cmd><C-U>TmuxNavigateDown<cr>", { desc = 'Move cursor to the window below' })
+vim.keymap.set("n", "<C-k>", "<cmd><C-U>TmuxNavigateUp<cr>", { desc = 'Move cursor to the window above' })
 
 require("auto-dark-mode").setup({
   fallback = "light"

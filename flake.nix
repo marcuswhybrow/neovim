@@ -82,6 +82,9 @@
         # Pin specific files to specific keys for instanst switching
         pkgs.vimPlugins.harpoon
 
+        # Navigate vim and tmux splits with the same keymaps
+        pkgs.vimPlugins.vim-tmux-navigator
+
         # SYNTAX HIGHLIGHTING
 
         # Treesitter parses files into trees of tokens for cheap syntax 
