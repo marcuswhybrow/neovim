@@ -87,147 +87,209 @@ vim.opt.updatetime = 50
 
 -- [[lsp-zero]]
 
-local lsp = require('lsp-zero').preset({
-  -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v2.x/doc/md/api-reference.md#manage_nvim_cmp
-  manage_nvim_cmp = {
-    set_sources = "recommended",
-    set_basic_mappings = true,
-    set_extra_mappins = false, 
-    use_luasnip = false,
-    set_format = true,
-    documentation_window = true,
+-- local lsp = require('lsp-zero').preset({
+--   -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v2.x/doc/md/api-reference.md#manage_nvim_cmp
+--   manage_nvim_cmp = {
+--     set_sources = "recommended",
+--     set_basic_mappings = true,
+--     set_extra_mappins = false, 
+--     use_luasnip = false,
+--     set_format = true,
+--     documentation_window = true,
+--   }
+-- })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { silent = true })
+    vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { silent = true })
+    vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { silent = true })
+
+    -- Neovim LSP creates keymaps by that interfere with my chosen mappings
+    -- https://neovim.io/doc/user/lsp.html#lsp-defaults-disable
+    vim.cmd.unmap "grr"
+    vim.cmd.unmap "gri"
+    vim.cmd.unmap "grn"
+    vim.cmd.unmap "gra"
+  end
+})
+
+-- [[nvim-cmp]]
+
+local cmp = require('cmp')
+-- local cmp_action = require('lsp-zero').cmp_action()
+
+local cmp_up = function(count, behavior) 
+  return function()
+    cmp.select_prev_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count or 1 })
+  end
+end
+
+local cmp_down = function(count, behavior, check) 
+  return function()
+    local check = check == nil and true or check == true
+    local count = (check and cmp.get_active_entry() == nil) and 0 or count or 1
+    cmp.select_next_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count })
+  end
+end
+
+local cmp_mapping = {
+  -- ["<Tab>"] = cmp.mapping.select_next_item(),
+  ["<Tab>"] = cmp_down(1),
+  ["<S-Tab>"] = cmp_up(1),
+
+  ["<C-D>"] = cmp_down(10),
+  ["<C-U>"] = cmp_up(10),
+
+  ["<Down>"] = cmp_down(1),
+  ["<Up>"] = cmp_up(1),
+
+  ["<CR>"] = cmp.mapping.confirm({ select = true }),
+}
+
+cmp.setup({
+  preselect = "item",
+
+  completion = {
+    completeopt = "menu,menuone,noinsert",
+  },
+
+  window = {
+    completion = cmp.config.window.bordered({
+      border = "none",
+      winhighlight = "Normal:NormalFloat,FloatBorder:Comment,CursorLine:Visual,Search:None",
+    }),
+    documentation = cmp.config.window.bordered({
+      border = "none",
+      winhighlight = "Normal:NormalFloat,FloatBorder:Comment,CursorLine:Visual,Search:None",
+    }),
+  },
+
+  mapping = cmp.mapping.preset.insert(cmp_mapping),
+
+  snippet = {
+    expand = function(args)
+      local luasnip = require("luasnip")
+      if not luasnip then
+        return
+      end 
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+
+  sources = {
+    { name = "path" },
+    { name = "nvim_lsp" },
+    { name = "buffer" },
+    { name = "nvim_lua" },
+  },
+
+  formatting = {
+    format = function(entry, item)
+      local cmp_kinds = {
+        Text = '  ',
+        Method = '  ',
+        Function = '  ',
+        Constructor = '  ',
+        Field = '  ',
+        Variable = '  ',
+        Class = '  ',
+        Interface = '  ',
+        Module = '  ',
+        Property = '  ',
+        Unit = '  ',
+        Value = '  ',
+        Enum = '  ',
+        Keyword = '  ',
+        Snippet = '  ',
+        Color = '  ',
+        File = '  ',
+        Reference = '  ',
+        Folder = '  ',
+        EnumMember = '  ',
+        Constant = '  ',
+        Struct = '  ',
+        Event = '  ',
+        Operator = '  ',
+        TypeParameter = '  ',
+      }
+      item.kind = (cmp_kinds[item.kind] or '') .. item.kind
+      item.menu = ({
+        buffer = "Buffer",
+        nvim_lsp = "LSP",
+        luasnip = "LuaSnip",
+        nvim_lua = "Lua",
+        latex_symbols = "LaTeX",
+      })[entry.source.name]
+      return item
+      -- return require("nvim-highlight-colors").format(entry, item)
+    end
   }
 })
 
-lsp.on_attach(function(client, bufnr)
-  lsp.default_keymaps({ buffer = bufnr })
-  lsp.buffer_autoformat()
-  vim.keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<cr>", { buffer = true })
-end)
+cmp.setup.filetype("gitcommit", {
+  source = cmp.config.sources({
+    { name = "cmp_git" },
+  }, {
+    { name = "buffer" },
+  })
+})
 
--- [[lsp-status]]
--- Must occur before lspconfig setup
+cmp.setup.cmdline({ "/", "?" }, {
+  mapping = cmp.mapping.preset.cmdline({
+    ["<Tab>"] = { c = cmp_down(1) },
+    ["<S-Tab>"] = { c = cmp_up(1), },
+    ["<Up>"] = { c = cmp_up(1), },
+    ["<Down>"] = { c = cmp_down(1), },
+    ["<C-U>"] = { c = cmp_up(1), },
+    ["<C-D>"] = { c = cmp_down(1), },
+  }),
+  sources = {
+    { name = "buffer" },
+  },
+})
 
--- local lsp_status = require("lsp-status")
--- lsp_status.config({
---   show_filename = true,
--- })
+cmp.setup.cmdline(":", {
+  mapping = cmp.mapping.preset.cmdline({
+    ["<Tab>"] = { c = cmp_down(1) },
+    ["<S-Tab>"] = { c = cmp_up(1), },
+    ["<Up>"] = { c = cmp_up(1), },
+    ["<Down>"] = { c = cmp_down(1), },
+    ["<C-U>"] = { c = cmp_up(1), },
+    ["<C-D>"] = { c = cmp_down(1), },
+  }),
+  sources = cmp.config.sources({
+    { name = "path" },
+  }, {
+    { name = "cmdline" },
+  })
+})
 
--- lsp_status.register_progress()
-
--- [[nvim-lspconfig]]
--- Must occur after lsp-status setup
-
-local lspconfig = require('lspconfig')
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cssls
-local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
--- capabilities = vim.tbl_extend("keep", capabilities or {}, lsp_status.capabilities)
+capabilities.experimental = {
+  serverStatusNotification = true
+}
 
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-lspconfig.gopls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-
--- https://templ.guide/commands-and-tools/ide-support#neovim--050
-lspconfig.templ.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
+vim.lsp.config("*", {
+  capabilities = capabilities,
+  root_markers = { ".git" },
 })
 
-lspconfig.tailwindcss.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities,
-  filetypes = {
-    'templ',
-    'html',
-    'gohtml',
-    'go',
-  },
-  init_options = {
-    userLanguages = {
-      templ = "html",
-      go = "html",
-    }
-  },
-  handlers = {
-    -- https://github.com/tailwindlabs/tailwindcss-intellisense/issues/188#issuecomment-886110433
-    ["tailwindcss/getConfiguration"] = function (_, _, params, _, bufnr, _)
-      -- tailwindcss lang server waits for this repsonse before providing hover
-      vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id })
-    end
-  },
-})
+-- https://neovim.io/doc/user/lsp.html#vim.lsp.Config
+vim.lsp.config("rust-analyzer", {
+  cmd = { "rust-analyzer" },
+  filetypes = { "rust" },
+  root_markers = { "Cargo.toml" },
 
-lspconfig.nil_ls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.bashls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.cssls.setup({
-  -- capabilities = capabilities,
-})
-lspconfig.jsonls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.eslint.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.yamlls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.marksman.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-lspconfig.hyprls.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities
-})
-
-lspconfig.html.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities,
-  filetypes = { "html" }, -- Omits implicit "templ" to prevent formatting bug
-})
-
--- -- Perform Typescript checking on JavaScript
--- -- https://www.reddit.com/r/neovim/comments/132ax85/comment/jiacvuy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
--- lspconfig.tsserver.setup({
---   on_attach = lsp_status.on_attach,
---   settings = {
---     implicitProjectConfiguration = {
---       target = "ES2021",
---       checkJs = true
---     }
---   },
---   capabilities
--- })
-lspconfig.ts_ls.setup({
-  -- on_attach = lsp_status.on_attach,
-  compilerOptions = {
-    target = "ES2021",
-    checkJs = true
-  },
-  -- capabilities
-})
-
-lspconfig.rust_analyzer.setup({
-  -- on_attach = lsp_status.on_attach,
-  -- capabilities,
+  -- https://rust-analyzer.github.io/book/configuration.html
   settings = {
-    ['rust-analyzer'] = {
+    ["rust-analyzer"] = {
       diagnostics = {
         enable = true;
-        disabled = {"unresolved-proc-macro"},
+        disabled = { "unresolved-proc-macro" },
         enableExperimental = true,
       },
 
@@ -244,26 +306,129 @@ lspconfig.rust_analyzer.setup({
   },
 })
 
-
--- Manual formatting (instead of buffer_autoformat() above)
---[[
-lsp.format_on_save({
-servers = {
-["lua_ls"] = {"lua"},
-}
+vim.lsp.config("tailwindcss", {
+  cmd = { 'tailwindcss-language-server', '--stdio' },
+  filetypes = {
+    "templ",
+    "html",
+    "gohtml",
+    "go",
+    "rust",
+  },
+  root_markers = {
+    "tailwind.config.js",
+  },
+  init_options = {
+    userLanguages = {
+      templ = "html",
+      go = "html",
+    }
+  },
+  handlers = {
+    -- https://github.com/tailwindlabs/tailwindcss-intellisense/issues/188#issuecomment-886110433
+    ["tailwindcss/getConfiguration"] = function (_, _, params, _, bufnr, _)
+      -- tailwindcss lang server waits for this repsonse before providing hover
+      vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id })
+    end
+  },
 })
---]]
 
-lsp.set_sign_icons({
-  error = '✘',
-  warn = '▲',
-  hint = '⚑',
-  info = '»',
+vim.lsp.config("html", {
+  cmd = { "vscode-html-language-server", "--stdio" },
+  filetypes = { "html" },
+  root_markers = { "package.json" },
+  init_options = {
+    provideFormatter = true,
+    embeddedLanguages = { css = true, javascript = true },
+    configurationSection = { 'html', 'css', 'javascript' },
+  },
 })
 
-lsp.setup()
+vim.lsp.config("ts_ls", {
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  root_markers = { "package.json", "tsconfig.json", "jsconfig.json" },
+  settings = {
+    compilerOptions = {
+      target = "ES2021",
+      checkJs = true,
+    },
+  }
+})
 
-vim.keymap.set("n", "<leader>lr", ":LspRestart<cr>", { desc = "[L]SP [R]estart" })
+vim.lsp.config("gopls", {
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_markers = { "go.mod" },
+})
+
+vim.lsp.config("templ", {
+  cmd = { "templ", "lsp" },
+  filetypes = { "templ" },
+  root_markers = { "go.mod" },
+})
+
+vim.lsp.config("tailwindcss", {
+  cmd = { "templ", "lsp" },
+  filetypes = { "templ" },
+  root_markers = { "go.mod" },
+})
+
+vim.lsp.config("nil_ls", {
+  cmd = { "nil" },
+  filetypes = { "nix" },
+  root_markers = { "flake.nix" },
+})
+
+vim.lsp.config("bashls", {
+  cmd = { "bash-language-server", "start" },
+  filetypes = { "bash", "sh" },
+})
+
+vim.lsp.config("cssls", {
+  cmd = { "vscode-css-language-server", "--stdio" },
+  filetypes = { "css", "scss", "less" },
+  init_options = { provideFormatter = true },
+  root_markers = { "package.json" },
+  settings = {
+    css = { validate = true },
+    scss = { validate = true },
+    less = { validate = true },
+  },
+})
+
+vim.lsp.config("jsonls", {
+  cmd = { "vscode-json-language-server", "--stdio" },
+  filetypes = { "json", "jsonc" },
+  init_options = { provideFormatter = true },
+})
+
+vim.lsp.config("eslint", {
+  cmd = { "vscode-eslint-language-server", "--stdio" },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx", "vue", "svelte", "astro" },
+  init_options = { provideFormatter = true },
+  root_markers = { "package.json" },
+})
+
+vim.lsp.config("yamlls", {
+  cmd = { "yaml-language-server", "--stdio" },
+  filetypes = { "yaml" },
+  settings = { redhat = { telemetry = { enabled = false } } },
+})
+
+vim.lsp.config("marksman", {
+  cmd = { "marksman", "server" },
+  filetypes = { "markdown", "markdown.mdx" },
+  root_markers = { ".marksman.toml" },
+})
+
+vim.lsp.config("hyprls", {
+  cmd = { "hyprls", "--stdio" },
+  filetypes = { "hyprlang" },
+})
+
+vim.lsp.enable("rust-analyzer", "gopls", "templ", "tailwindcss", "nil_ls", "bashls", "cssls", "jsonls", "eslint", "yamlls", "marksman", "hyprls", "html")
+
 
 -- [[catppuccin-nvim]]
 
@@ -286,6 +451,23 @@ require("catppuccin").setup({
       StatusLineNC = { bg = "NONE" },
       WinSeparator = { fg = "bg" },
       ColorColumn = { ctermbg = "black" },
+
+      -- -- gray
+      -- CmpItemAbbrDeprecated = { bg='NONE', strikethrough=true, fg='#808080' },
+      -- -- blue
+      -- CmpItemAbbrMatch = { bg='NONE', fg='#569CD6' },
+      -- CmpItemAbbrMatchFuzzy = { link='CmpIntemAbbrMatch' },
+      -- -- light blue
+      -- CmpItemKindVariable = { bg='NONE', fg='#9CDCFE' },
+      -- CmpItemKindInterface = { link='CmpItemKindVariable' },
+      -- CmpItemKindText = { link='CmpItemKindVariable' },
+      -- -- pink
+      -- CmpItemKindFunction = { bg='NONE', fg='#C586C0' },
+      -- CmpItemKindMethod = { link='CmpItemKindFunction' },
+      -- -- front
+      -- CmpItemKindKeyword = { bg='NONE', fg='#D4D4D4' },
+      -- CmpItemKindProperty = { link='CmpItemKindKeyword' },
+      -- CmpItemKindUnit = { link='CmpItemKindKeyword' },
     }
   end
 })
@@ -452,71 +634,6 @@ require('lualine').setup({
   extensions = {},
 })
 
--- [[nvim-cmp]]
-
-local cmp = require('cmp')
-local cmp_action = require('lsp-zero').cmp_action()
-
-cmp.setup({
-  preselect = "item",
-
-  completion = {
-    completeopt = "menu,menuone,noinsert",
-  },
-
-  mapping = {
-    ["<Tab>"] = cmp_action.tab_complete(),
-    ["<S-Tab>"] = cmp_action.select_prev_or_fallback(),
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-  },
-
-  snippet = {
-    expand = function(args)
-      local luasnip = require("luasnip")
-      if not luasnip then
-        return
-      end 
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-
-  sources = {
-    { name = "path" },
-    { name = "nvim_lsp" },
-    { name = "buffer" },
-    { name = "nvim_lua" },
-  },
-
-  formatting = {
-    format = function(entry, item)
-      return require("nvim-highlight-colors").format(entry, item)
-    end
-  }
-})
-
-cmp.setup.filetype("gitcommit", {
-  source = cmp.config.sources({
-    { name = "cmp_git" },
-  }, {
-    { name = "buffer" },
-  })
-})
-
-cmp.setup.cmdline({ "/", "?" }, {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = "buffer" },
-  },
-})
-
-cmp.setup.cmdline(":", {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = "path" },
-  }, {
-    { name = "cmdline" },
-  })
-})
 
 -- [[nvim-treesitter]] 
 
@@ -621,15 +738,15 @@ require("nvim-highlight-colors").setup()
 -- Fix for https://github.com/neovim/neovim/issues/30985 whereby rust-analyzer
 -- constantly lags user input with the message "server cancelled the request".
 -- https://github.com/neovim/neovim/issues/30985#issuecomment-2447329525
-for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
-    local default_diagnostic_handler = vim.lsp.handlers[method]
-    vim.lsp.handlers[method] = function(err, result, context, config)
-        if err ~= nil and err.code == -32802 then
-            return
-        end
-        return default_diagnostic_handler(err, result, context, config)
-    end
-end
+-- for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
+--     local default_diagnostic_handler = vim.lsp.handlers[method]
+--     vim.lsp.handlers[method] = function(err, result, context, config)
+--         if err ~= nil and err.code == -32802 then
+--             return
+--         end
+--         return default_diagnostic_handler(err, result, context, config)
+--     end
+-- end
 
 -- Window splitting, moving, and navigating
 -- <C-h>/<C-l>/etc. must come last to override something implicit above

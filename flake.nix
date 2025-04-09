@@ -38,9 +38,6 @@
         # LSP & Message viewer
         pkgs.vimPlugins.fidget-nvim
 
-        # LSP readout for vim status line 
-        pkgs.vimPlugins.lsp-status-nvim
-
         # Color theme
         pkgs.vimPlugins.catppuccin-nvim
 
@@ -110,10 +107,6 @@
 
         # LANGUAGE SERVER PROTOCOL
 
-        # LSP Zero knows about every language server in existance, and uses 
-        # sensible defaults, whilst allowing overrides when needed.
-        pkgs.vimPlugins.lsp-zero-nvim
-
         # Lists project-wide LSP errors for you to fix
         pkgs.vimPlugins.trouble-nvim
 
@@ -152,7 +145,6 @@
         pkgs.vimPlugins.cmp_luasnip
 
         # Language Server Protocol configurations & completion
-        pkgs.vimPlugins.nvim-lspconfig
         pkgs.vimPlugins.cmp-nvim-lsp
 
         # Completion for Neovim Lua API
@@ -238,9 +230,6 @@
               # Nix LSP server
               pkgs.nil
 
-              # Golang LSP server
-              pkgs.gopls
-
               # Tailwind LSP server
               pkgs.nodePackages."@tailwindcss/language-server"
 
@@ -253,22 +242,8 @@
               # YAML LSP server
               pkgs.nodePackages.yaml-language-server
 
-              # Rust LSP server
-              pkgs.rust-analyzer
-
               # Markdown LSP server
               pkgs.marksman
-
-              # Typescript/JSDoc LSP server
-              pkgs.typescript-language-server
-
-              # Hyprland conf LSP server
-              (pkgs.fetchFromGitHub {
-                owner = "hyprland-community";
-                repo = "hyprls";
-                rev = "da23c2948d2696f60816ff47bc562bb434ddb8fb";
-                sha256 = "sha256-TvrbTlMGn1XtMe5lK7/X69nezmGn51TScd06pdthaF8=";
-              })
 
               # Required by pkgs.vimPlugins.cmp-git
               pkgs.curl
