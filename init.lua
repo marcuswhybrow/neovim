@@ -120,16 +120,24 @@ local cmp = require('cmp')
 -- local cmp_action = require('lsp-zero').cmp_action()
 
 local cmp_up = function(count, behavior) 
-  return function()
-    cmp.select_prev_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count or 1 })
+  return function(fallback)
+    if cmp.visible() then
+      cmp.select_prev_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count or 1 })
+    else 
+      fallback()
+    end
   end
 end
 
 local cmp_down = function(count, behavior, check) 
-  return function()
-    local check = check == nil and true or check == true
-    local count = (check and cmp.get_active_entry() == nil) and 0 or count or 1
-    cmp.select_next_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count })
+  return function(fallback)
+    if cmp.visible() then
+      local check = check == nil and true or check == true
+      local count = (check and cmp.get_active_entry() == nil) and 0 or count or 1
+      cmp.select_next_item({ behavior = behavior or cmp.SelectBehavior.Insert, count = count })
+    else 
+      fallback()
+    end
   end
 end
 
@@ -295,12 +303,13 @@ vim.lsp.config("rust-analyzer", {
 
       cargo = {
         buildScripts = {
-          enable = true;
+          enable = true,
         },
       },
 
       procMacro = {
-        enable = true;
+        enable = true,
+        ignored = { leptos_macro = { "component" } },
       },
     },
   },
