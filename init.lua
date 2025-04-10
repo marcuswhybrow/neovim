@@ -141,6 +141,12 @@ local cmp_down = function(count, behavior, check)
   end
 end
 
+local cmp_kind_filter = false
+
+cmp.event:on("menu_closed", function(_) 
+  cmp_kind_filter = false
+end)
+
 local cmp_mapping = {
   -- ["<Tab>"] = cmp.mapping.select_next_item(),
   ["<Tab>"] = cmp_down(1),
@@ -149,14 +155,58 @@ local cmp_mapping = {
   ["<C-D>"] = cmp_down(10),
   ["<C-U>"] = cmp_up(10),
 
+  ["<C-F>"] = function(fallback)
+    if not cmp.visible() then 
+      return fallback()
+    end
+
+    cmp_kind_filter = not cmp_kind_filter
+
+    local pass = {
+      Function = true,
+      Method = true,
+      Field = true,
+      EnumMember = true,
+      Constructor = true,
+      Property = true,
+      Constant = true,
+    }
+
+    -- https://github.com/hrsh7th/nvim-cmp/blob/v0.0.2/doc/cmp.txt#L668
+    function cmp_entry_filter(entry, ctx)
+      if not cmp_kind_filter then 
+        return true 
+      end
+      local kind = require("cmp.types").lsp.CompletionItemKind[entry:get_kind()]
+      return pass[kind] ~= nil
+    end
+
+    cmp.complete({
+      config = {
+        sources = {
+          { name = "path", entry_filter = cmp_entry_filter },
+          { name = "nvim_lsp", entry_filter = cmp_entry_filter },
+          { name = "buffer", entry_filter = cmp_entry_filter },
+          { name = "nvim_lua", entry_filter = cmp_entry_filter },
+        },
+      }
+    })
+  end,
+
   ["<Down>"] = cmp_down(1),
   ["<Up>"] = cmp_up(1),
 
   ["<CR>"] = cmp.mapping.confirm({ select = true }),
 }
 
+
 cmp.setup({
   preselect = "item",
+
+  performance = {
+    debounce = 0,
+    throttle = 0,
+  },
 
   completion = {
     completeopt = "menu,menuone,noinsert",
@@ -164,12 +214,12 @@ cmp.setup({
 
   window = {
     completion = cmp.config.window.bordered({
-      border = "none",
-      winhighlight = "Normal:NormalFloat,FloatBorder:Comment,CursorLine:Visual,Search:None",
+      border = "rounded",
+      winhighlight = "Normal:Normal,FloatBorder:TelescopeBorder,CursorLine:Visual,Search:None",
     }),
     documentation = cmp.config.window.bordered({
-      border = "none",
-      winhighlight = "Normal:NormalFloat,FloatBorder:Comment,CursorLine:Visual,Search:None",
+      border = "rounded",
+      winhighlight = "Normal:Normal,FloatBorder:TelescopeBorder,CursorLine:Visual,Search:None",
     }),
   },
 
@@ -295,21 +345,12 @@ vim.lsp.config("rust-analyzer", {
   -- https://rust-analyzer.github.io/book/configuration.html
   settings = {
     ["rust-analyzer"] = {
+      cargo = { buildScripts = { enable = true } },
+      procMacro = { enable = true },
       diagnostics = {
         enable = true;
         disabled = { "unresolved-proc-macro" },
         enableExperimental = true,
-      },
-
-      cargo = {
-        buildScripts = {
-          enable = true,
-        },
-      },
-
-      procMacro = {
-        enable = true,
-        ignored = { leptos_macro = { "component" } },
       },
     },
   },
