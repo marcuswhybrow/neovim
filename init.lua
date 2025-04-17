@@ -101,16 +101,20 @@ vim.opt.updatetime = 50
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
+    -- vim.keymap.del('n', 'K', { buffer = 0 })
+
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { silent = true })
     vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { silent = true })
     vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { silent = true })
+    vim.keymap.set("n", "gR", function() vim.lsp.buf.rename() end, { silent = true })
+    vim.keymap.set("n", "K", function() vim.lsp.buf.hover({ border = "rounded" }) end, { silent = true })
 
     -- Neovim LSP creates keymaps by that interfere with my chosen mappings
     -- https://neovim.io/doc/user/lsp.html#lsp-defaults-disable
-    vim.cmd.unmap "grr"
-    vim.cmd.unmap "gri"
-    vim.cmd.unmap "grn"
-    vim.cmd.unmap "gra"
+    -- vim.cmd.unmap "grr"
+    -- vim.cmd.unmap "gri"
+    -- vim.cmd.unmap "grn"
+    -- vim.cmd.unmap "gra"
   end
 })
 
@@ -336,6 +340,34 @@ vim.lsp.config("*", {
   root_markers = { ".git" },
 })
 
+string.begins_with = function(self, prefix)
+   return string.sub(self, 1, string.len(prefix)) == prefix
+end
+
+
+function maybe_connection()
+  local database_url = os.getenv("DATABASE_URL")
+  if database_url:begins_with("sqlite:") then 
+    return {
+      { driver = "sqlite", dataSourceName = database_url }
+    }
+  else 
+    return {}
+  end
+end
+
+vim.lsp.config("sqls", {
+  cmd = { "sqls" },
+  filetypes = { "sql" },
+
+  settings = {
+    sqls = {
+      -- connections = maybe_connection(),
+      connections = { driver = "sqlite", dataSourceName = "sqlite:/mnt/d/local/Collections/.videoserver/videoserver.sqlite" }
+    },
+  },
+})
+
 -- https://neovim.io/doc/user/lsp.html#vim.lsp.Config
 vim.lsp.config("rust-analyzer", {
   cmd = { "rust-analyzer" },
@@ -477,7 +509,8 @@ vim.lsp.config("hyprls", {
   filetypes = { "hyprlang" },
 })
 
-vim.lsp.enable("rust-analyzer", "gopls", "templ", "tailwindcss", "nil_ls", "bashls", "cssls", "jsonls", "eslint", "yamlls", "marksman", "hyprls", "html")
+vim.lsp.enable("rust-analyzer", "gopls", "templ", "tailwindcss", "nil_ls", "bashls", "cssls", "jsonls", "eslint", "yamlls", "marksman", "hyprls", "html", "sqls")
+
 
 
 -- [[catppuccin-nvim]]
@@ -492,6 +525,7 @@ require("catppuccin").setup({
     return {
       AttentionGrab = { fg = "fg", style = { "bold" }, bg = "NONE" },
       TelescopeBorder = { link = "Comment" },
+      FloatBorder = { link = "Comment" },
       NeoTreeNormal = { bg = "NONE" },
       NeoTreeNormalNC = { bg = "NONE" },
       NeoTreeStatusLineNC = { bg = "NONE" },
@@ -501,23 +535,6 @@ require("catppuccin").setup({
       StatusLineNC = { bg = "NONE" },
       WinSeparator = { fg = "bg" },
       ColorColumn = { ctermbg = "black" },
-
-      -- -- gray
-      -- CmpItemAbbrDeprecated = { bg='NONE', strikethrough=true, fg='#808080' },
-      -- -- blue
-      -- CmpItemAbbrMatch = { bg='NONE', fg='#569CD6' },
-      -- CmpItemAbbrMatchFuzzy = { link='CmpIntemAbbrMatch' },
-      -- -- light blue
-      -- CmpItemKindVariable = { bg='NONE', fg='#9CDCFE' },
-      -- CmpItemKindInterface = { link='CmpItemKindVariable' },
-      -- CmpItemKindText = { link='CmpItemKindVariable' },
-      -- -- pink
-      -- CmpItemKindFunction = { bg='NONE', fg='#C586C0' },
-      -- CmpItemKindMethod = { link='CmpItemKindFunction' },
-      -- -- front
-      -- CmpItemKindKeyword = { bg='NONE', fg='#D4D4D4' },
-      -- CmpItemKindProperty = { link='CmpItemKindKeyword' },
-      -- CmpItemKindUnit = { link='CmpItemKindKeyword' },
     }
   end
 })
