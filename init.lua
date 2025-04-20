@@ -101,20 +101,31 @@ vim.opt.updatetime = 50
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
-    -- vim.keymap.del('n', 'K', { buffer = 0 })
+    -- vim.keymap.del('n', 'K', { buffer = args.buf })
+    -- vim.keymap.del("n", "grr", { buffer = args.buf })
+    -- vim.keymap.del("n", "gri", { buffer = args.buf })
+    -- vim.keymap.del("n", "grn", { buffer = args.buf })
+    -- vim.keymap.del("n", "gra", { buffer = args.buf })
+
+    -- "protected call" to combat an error thrown on the *second* LSP attach.
+    -- Not sure what I'm doing wrong, but I'm at odds with the docs here:
+    -- https://neovim.io/doc/user/lsp.html#lsp-defaults-disable
+    pcall(function() 
+      -- Neovim LSP creates keymaps by that interfere with my chosen mappings
+      -- https://neovim.io/doc/user/lsp.html#lsp-defaults-disable
+      vim.keymap.del('n', 'K', { buffer = args.buf })
+      vim.cmd.unmap "grr"
+      vim.cmd.unmap "gri"
+      vim.cmd.unmap "grn"
+      vim.cmd.unmap "gra"
+    end)
 
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { silent = true })
     vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { silent = true })
     vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { silent = true })
     vim.keymap.set("n", "gR", function() vim.lsp.buf.rename() end, { silent = true })
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover({ border = "rounded" }) end, { silent = true })
+    vim.keymap.set("n", "<S-k>", function() vim.lsp.buf.hover({ border = "rounded" }) end, { silent = true })
 
-    -- Neovim LSP creates keymaps by that interfere with my chosen mappings
-    -- https://neovim.io/doc/user/lsp.html#lsp-defaults-disable
-    -- vim.cmd.unmap "grr"
-    -- vim.cmd.unmap "gri"
-    -- vim.cmd.unmap "grn"
-    -- vim.cmd.unmap "gra"
   end
 })
 
