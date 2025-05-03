@@ -126,6 +126,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "gR", function() vim.lsp.buf.rename() end, { silent = true })
     vim.keymap.set("n", "<S-k>", function() vim.lsp.buf.hover({ border = "rounded" }) end, { silent = true })
 
+    -- Open LSP docs in browser
+    vim.keymap.set("n", "<C-K>", function() 
+      -- credit https://www.reddit.com/r/rust/comments/w7cf7d/comment/ihjur2p
+      vim.lsp.buf_request(vim.api.nvim_get_current_buf(), 'experimental/externalDocs', vim.lsp.util.make_position_params(), function(err, url)
+        if err then
+          error(tostring(err))
+        else
+          if url then
+            vim.ui.open(url)
+          end
+        end
+      end)
+    end)
+
   end
 })
 
