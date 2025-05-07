@@ -301,13 +301,6 @@ cmp.setup({
         TypeParameter = '  ',
       }
       item.kind = (cmp_kinds[item.kind] or '') .. item.kind
-      item.menu = ({
-        buffer = "Buffer",
-        nvim_lsp = "LSP",
-        luasnip = "LuaSnip",
-        nvim_lua = "Lua",
-        latex_symbols = "LaTeX",
-      })[entry.source.name]
       return item
       -- return require("nvim-highlight-colors").format(entry, item)
     end
