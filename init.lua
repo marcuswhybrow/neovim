@@ -854,10 +854,6 @@ vim.keymap.set("n", "<C-l>", "<cmd><C-U>TmuxNavigateRight<cr>", { desc = 'Move c
 vim.keymap.set("n", "<C-j>", "<cmd><C-U>TmuxNavigateDown<cr>", { desc = 'Move cursor to the window below' })
 vim.keymap.set("n", "<C-k>", "<cmd><C-U>TmuxNavigateUp<cr>", { desc = 'Move cursor to the window above' })
 
-require("auto-dark-mode").setup({
-  fallback = "light"
-})
-
 -- [[which-key]]
 
 require("which-key").setup({

@@ -41,18 +41,6 @@
         # Color theme
         pkgs.vimPlugins.catppuccin-nvim
 
-        # Auto detect terminal light/dark theme
-        (pkgs.vimUtils.buildVimPlugin {
-          pname = "auto-dark-mode";
-          version = "2025-03-10";
-          src = pkgs.fetchFromGitHub {
-            owner = "f-person";
-            repo = "auto-dark-mode.nvim";
-            rev = "c31de126963ffe9403901b4b0990dde0e6999cc6";
-            sha256 = "sha256-ZCViqnA+VoEOG+Xr+aJNlfRKCjxJm5y78HRXax3o8UY=";
-          };
-        })
-
         # Makes the background of CSS colors the actual color defined
         pkgs.vimPlugins.nvim-highlight-colors 
 
