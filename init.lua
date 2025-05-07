@@ -302,7 +302,6 @@ cmp.setup({
       }
       item.kind = (cmp_kinds[item.kind] or '') .. item.kind
       return item
-      -- return require("nvim-highlight-colors").format(entry, item)
     end
   }
 })
