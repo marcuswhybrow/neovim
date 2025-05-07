@@ -394,7 +394,10 @@ vim.lsp.config("rust-analyzer", {
   -- https://rust-analyzer.github.io/book/configuration.html
   settings = {
     ["rust-analyzer"] = {
-      cargo = { buildScripts = { enable = true } },
+      cargo = { 
+        buildScripts = { enable = true },
+        features = "all",
+      },
       procMacro = { enable = true },
       diagnostics = {
         enable = true;
